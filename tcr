@@ -1,0 +1,26 @@
+#!/bin/bash
+
+set -o nounset
+
+test_code() {
+    npm test
+}
+
+main() {
+    test_code
+
+    if [[ $? -eq 0 ]]; then
+        git add . && git commit -m "$1"
+        echo "Go ahead!"
+    else
+        echo "Tests failed, reverting..."
+        git reset --hard
+    fi
+}
+
+if [[ $# -ne 1 ]]; then
+    echo "Usage: tcr \"commit message\""
+    exit 1
+fi
+
+main "$1"
